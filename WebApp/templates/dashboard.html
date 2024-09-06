@@ -1,0 +1,116 @@
+<!-- Remove signin signout -->
+<!--Change icon Remove signin signout -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowy Cam</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #d32f2f;
+        }
+        h5 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .video-container {
+            margin: 20px 0;
+            border: 2px solid #424242;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 300px;
+            width: 100%;
+            background-color: #2c2c2c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .not-available {
+            color: #757575;
+            font-size: 20px;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        #glasses-button {
+            background-color: #0d47a1;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h5>Welcome</h5>
+        <h3>This is Snowy 😼 Cam</h3>
+
+        <div class="video-container">
+            <img id="video-feed" src="{{ url_for('video_feed') }}" onerror="this.parentElement.innerHTML = '<div class=\'not-available\'>Not Available</div>';">
+        </div>
+
+        <div class="action-buttons">
+            <button id="glasses-button" class="btn waves-effect waves-light">👓</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+
+        document.getElementById('video-feed').addEventListener('error', function() {
+        console.error('Error loading video feed');
+});
+        
+
+        let talkingEnabled = false;
+
+        document.getElementById('glasses-button').addEventListener('click', function() {
+            talkingEnabled = !talkingEnabled; 
+            this.style.backgroundColor = talkingEnabled ? '#d32f2f' : '#0d47a1'; 
+            
+            fetch('/toggle_talking', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled: talkingEnabled })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Talking state:', data.enabled))
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
